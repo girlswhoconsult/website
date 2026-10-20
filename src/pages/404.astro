@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Glyph from '../components/Glyph.astro';
+---
+
+<BaseLayout title="Page not found">
+  <section class="container-x grid min-h-[60vh] content-center gap-6 py-20">
+    <Glyph shape="sparkle" size={56} class="text-pink-600" />
+    <h1 class="h2 max-w-[18ch]">We couldn’t find that page.</h1>
+    <p class="lead max-w-[48ch]">
+      It may have moved when we rebuilt the site. Start from the home page or head to About for programs, events, and
+      resources.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a class="btn btn-primary" href="/">Go to the home page</a>
+      <a class="btn btn-secondary" href="/about">About GWC</a>
+    </div>
+  </section>
+</BaseLayout>

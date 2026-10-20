@@ -1,0 +1,574 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Glyph from '../components/Glyph.astro';
+import EventCard from '../components/EventCard.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import ResourceCover from '../components/ResourceCover.astro';
+import { getEvents, getOrdered, getTeam, mailto, site } from '../lib/data';
+
+const { upcoming, past } = await getEvents();
+const programs = await getOrdered('programs');
+const flagship = programs.find((p) => p.data.flagship);
+const otherPrograms = programs.filter((p) => p !== flagship);
+const resources = await getOrdered('resources');
+const { founders } = await getTeam();
+const founder = founders[0];
+
+const sections = [
+  { id: 'story', label: 'Story' },
+  { id: 'values', label: 'Values' },
+  { id: 'programs', label: 'Programs' },
+  { id: 'events', label: 'Events' },
+  { id: 'resources', label: 'Resources' },
+  { id: 'get-involved', label: 'Get Involved' },
+];
+
+// A sequence, so it's numbered by stage rather than decorated.
+const timeline = [
+  { label: '2020', text: 'Founded by Belicia Tan during the Covid-19 pandemic.' },
+  {
+    label: 'First program',
+    text: 'A 5-week training program with professional development workshops and one-on-one mentorship.',
+  },
+  {
+    label: 'Flagship program',
+    text: 'Our Mentorship Program paired 100 mentors with 100 mentees for 8 weeks of professional curriculum.',
+  },
+  {
+    label: 'Today',
+    text: 'A national community with a talent pipeline to consulting firms, pro-bono work for social-impact organizations, and partner clubs at colleges across the U.S.',
+  },
+];
+
+const values = [
+  {
+    shape: 'triangle' as const,
+    title: 'Empowerment',
+    text: 'We empower women to feel confident in pursuing a male-dominated career field by providing them with the necessary toolkits and experiences to succeed.',
+  },
+  {
+    shape: 'circle' as const,
+    title: 'Inclusivity',
+    text: 'We prioritize expanding access to professional development opportunities, particularly among colleges underrepresented in the consulting industry.',
+  },
+  {
+    shape: 'arch' as const,
+    title: 'Community',
+    text: "We strive to create a tight-knit community that celebrates each other's successes and supports each other through hardships.",
+  },
+];
+
+const mentorHref = site.mentorSignupUrl || mailto('Becoming a Girls Who Consult mentor');
+const ways = [
+  {
+    icon: 'members',
+    title: 'Become a member',
+    text: 'Join our Slack community to hear about events, resources, and opportunities.',
+    cta: 'Join the Slack',
+    href: site.slack,
+    external: true,
+    primary: true,
+  },
+  {
+    icon: 'mentors',
+    title: 'Become a mentor',
+    text: 'Share your experience with students preparing for careers in consulting.',
+    cta: site.mentorSignupUrl ? 'Apply to mentor' : 'Email us about mentoring',
+    href: mentorHref,
+    external: Boolean(site.mentorSignupUrl),
+  },
+  {
+    icon: 'buddies',
+    title: 'Join the board',
+    text: 'Help run GWC’s professional development, outreach, marketing, and technology.',
+    cta: 'Apply to the board',
+    href: site.boardApplication.url,
+    external: true,
+    deadlines: site.boardApplication.showDeadlines ? site.boardApplication.deadlines : [],
+  },
+  {
+    icon: 'network',
+    title: 'Partner with us',
+    text: 'Consulting firms, college consulting clubs, and social-impact organizations looking for pro-bono support: let’s work together.',
+    cta: 'Email us about partnering',
+    href: mailto('Partnering with Girls Who Consult'),
+    external: false,
+  },
+];
+---
+
+<BaseLayout
+  title="About"
+  description="Girls Who Consult's story, values, programs, events, resources, and the ways to get involved."
+  anchorOffset="9.25rem"
+>
+  <!-- Page intro -->
+  <section class="container-x grid gap-8 pt-10 pb-12 sm:pt-14 lg:grid-cols-12 lg:items-end lg:pt-20 lg:pb-16">
+    <h1 class="page-title lg:col-span-7">About Girls Who Consult</h1>
+    <p class="lead lg:col-span-5">
+      A national intercollegiate community preparing women for careers in consulting, since 2020.
+    </p>
+  </section>
+
+  <!-- Sticky in-page navigation -->
+  <nav class="subnav" aria-label="On this page" data-subnav>
+    <div class="container-x">
+      <ul class="subnav-list">
+        {
+          sections.map((s) => (
+            <li>
+              <a href={`#${s.id}`} class="subnav-link" data-subnav-link={s.id}>
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Story -->
+  <section id="story" class="section" aria-labelledby="story-heading">
+    <div class="container-x grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-7" data-reveal>
+        <h2 id="story-heading" class="h2">Our story</h2>
+        <div class="mt-8 max-w-[60ch] space-y-5 text-lg">
+          <p>
+            Girls Who Consult was founded in 2020 amidst the Covid-19 pandemic by Belicia Tan, an ex-consultant and
+            alumna of Columbia University and University of Michigan. GWC started as a 5-week training program with
+            professional development workshops and one-on-one mentorship.
+          </p>
+          <p>
+            We have since expanded our impact through building a talent pipeline with consulting firms of various
+            sizes and industries, providing pro-bono consulting services for social impact-driven organizations, and
+            collaborating with consulting clubs across colleges in the U.S.
+          </p>
+        </div>
+      </div>
+      {
+        founder && (
+          <figure class="lg:col-span-4 lg:col-start-9" data-reveal>
+            <Image
+              src={founder.data.photo}
+              alt="Portrait of Belicia Tan, founder of Girls Who Consult"
+              widths={[360, 560, 800]}
+              sizes="(min-width: 1024px) 360px, (min-width: 640px) 60vw, 92vw"
+              class="aspect-[4/5] w-full max-w-[26rem] rounded-[4px] object-cover"
+            />
+            <figcaption class="mt-4 border-l-2 border-pink-600 pl-3 text-[0.9375rem]">
+              <span class="font-bold">Our Founder, Belicia Tan</span>
+            </figcaption>
+          </figure>
+        )
+      }
+    </div>
+
+    <div class="container-x mt-20 lg:mt-24" data-reveal>
+      <h3 class="text-lg font-bold tracking-[-0.01em]">How GWC has grown</h3>
+      <ol class="timeline mt-8">
+        {
+          timeline.map((step) => (
+            <li class="timeline-step">
+              <p class="font-bold text-pink-700">{step.label}</p>
+              <p class="mt-2 text-[0.9375rem] text-muted">{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section id="values" class="section bg-paper-tint" aria-labelledby="values-heading">
+    <div class="container-x">
+      <div class="grid gap-5 lg:grid-cols-12 lg:items-end" data-reveal>
+        <h2 id="values-heading" class="h2 lg:col-span-6">Our values</h2>
+        <p class="lead lg:col-span-5 lg:col-start-8">The three ideas behind every program we run.</p>
+      </div>
+      <ul class="mt-14 grid gap-5 md:grid-cols-3" role="list" data-reveal>
+        {
+          values.map((v) => (
+            <li class="rounded-[4px] border border-line bg-white p-7 sm:p-9">
+              <Glyph shape={v.shape} size={44} class="text-pink-600" />
+              <h3 class="h3 mt-10">{v.title}</h3>
+              <p class="mt-3 text-muted">{v.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Programs -->
+  <section id="programs" class="section" aria-labelledby="programs-heading">
+    <div class="container-x">
+      <div class="grid gap-5 lg:grid-cols-12 lg:items-end" data-reveal>
+        <h2 id="programs-heading" class="h2 lg:col-span-6">Our programs</h2>
+        <p class="lead lg:col-span-5 lg:col-start-8">
+          Case Competition, Ambassador Program, Workshops, Panels, and Case Buddies: GWC has developed initiatives to
+          support women since 2020.
+        </p>
+      </div>
+
+      <div class="mt-14 grid gap-10 lg:grid-cols-12 lg:gap-12" data-reveal>
+        {
+          flagship && (
+            <article class="flagship lg:col-span-5">
+              <p class="text-sm font-bold text-pink-700">Flagship program</p>
+              <h3 class="mt-3 text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.05]">{flagship.data.name}</h3>
+              <p class="mt-4 text-muted">{flagship.data.description}</p>
+              {flagship.data.highlights.length > 0 && (
+                <ul class="mt-8 space-y-3 border-t border-line pt-6" role="list">
+                  {flagship.data.highlights.map((h) => (
+                    <li class="flex items-start gap-3 font-semibold">
+                      <Glyph shape="sparkle" size={18} class="mt-[3px] flex-none text-pink-600" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <a class="btn btn-primary mt-9" href="#get-involved">
+                Get Involved
+              </a>
+            </article>
+          )
+        }
+        <ul class="border-t-2 border-ink lg:col-span-7" role="list">
+          {
+            otherPrograms.map((p) => (
+              <li class="grid gap-2 border-b border-line py-6 sm:grid-cols-[13rem_1fr] sm:gap-8">
+                <h3 class="flex items-center gap-3 text-lg font-bold tracking-[-0.015em]">
+                  {p.data.icon && <Icon name={p.data.icon} size={22} class="flex-none text-pink-600" />}
+                  {p.data.name}
+                </h3>
+                <p class="text-muted sm:pt-0.5">{p.data.description}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events -->
+  <section id="events" class="section bg-paper-tint" aria-labelledby="events-heading">
+    <div class="container-x">
+      <div class="grid gap-5 lg:grid-cols-12 lg:items-end" data-reveal>
+        <h2 id="events-heading" class="h2 lg:col-span-6">Events</h2>
+        <p class="lead lg:col-span-5 lg:col-start-8">Sign up for what’s coming next, and catch up on what you missed.</p>
+      </div>
+
+      <h3 class="mt-14 text-xl font-bold tracking-[-0.015em]">
+        Upcoming <span class="font-semibold text-muted">({upcoming.length})</span>
+      </h3>
+      {
+        upcoming.length > 0 ? (
+          <div class="mt-4 border-b border-line">
+            {upcoming.map((e) => (
+              <EventCard entry={e} headingLevel="h4" />
+            ))}
+          </div>
+        ) : (
+          <div class="mt-4 grid items-center gap-6 border-y border-line py-8 md:grid-cols-[1fr_auto]">
+            <div>
+              <p class="text-lg font-bold">No upcoming events are scheduled right now.</p>
+              <p class="mt-1 text-muted">New events are announced on Instagram and in our newsletter.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <a class="btn btn-secondary" href={site.instagram} target="_blank" rel="noopener">
+                Follow on Instagram
+              </a>
+              <a class="btn btn-tertiary" href="#newsletter">
+                Get the newsletter
+              </a>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        past.length > 0 && (
+          <>
+            <h3 class="mt-20 text-xl font-bold tracking-[-0.015em]">Past events</h3>
+            <div class="mt-4 border-b border-line">
+              {past.map((e) => (
+                <EventCard entry={e} variant="past" headingLevel="h4" />
+              ))}
+            </div>
+          </>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section id="resources" class="section" aria-labelledby="resources-heading">
+    <div class="container-x">
+      <div class="grid gap-5 lg:grid-cols-12 lg:items-end" data-reveal>
+        <h2 id="resources-heading" class="h2 lg:col-span-6">Resources</h2>
+        <p class="lead lg:col-span-5 lg:col-start-8">
+          Original resources the GWC team has made for each step of the consulting journey. Save this page for
+          updates!
+        </p>
+      </div>
+      <ul class="mt-14 grid gap-6 md:grid-cols-3" role="list" data-reveal>
+        {
+          resources.map((r, i) => (
+            <li>
+              <a class="resource group" href={r.data.url} target="_blank" rel="noopener">
+                <div class="resource-cover">
+                  {r.data.thumbnail ? (
+                    <Image
+                      src={r.data.thumbnail}
+                      alt={r.data.thumbnailAlt ?? ''}
+                      widths={[320, 560]}
+                      sizes="(min-width: 768px) 30vw, 90vw"
+                      class="h-[82%] w-auto object-contain"
+                    />
+                  ) : (
+                    <ResourceCover seed={i} />
+                  )}
+                </div>
+                <div class="p-6 sm:p-7">
+                  <h3 class="h3">{r.data.title}</h3>
+                  <p class="mt-2 text-muted">{r.data.description}</p>
+                  <p class="mt-5 inline-flex items-center gap-1.5 font-semibold text-pink-700">
+                    {r.data.cta}
+                    <Icon name="external" size={16} strokeWidth={2} />
+                    <span class="sr-only">(opens in a new tab)</span>
+                  </p>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Get involved -->
+  <section id="get-involved" class="section bg-paper-tint" aria-labelledby="involved-heading">
+    <div class="container-x">
+      <div class="grid gap-5 lg:grid-cols-12 lg:items-end" data-reveal>
+        <h2 id="involved-heading" class="h2 lg:col-span-6">Get involved</h2>
+        <p class="lead lg:col-span-5 lg:col-start-8">Pick the way you’d like to take part. Everyone starts somewhere.</p>
+      </div>
+
+      <ul class="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-4" role="list" data-reveal>
+        {
+          ways.map((w) => (
+            <li class="way">
+              <Icon name={w.icon} size={30} class="text-pink-600" />
+              <h3 class="h3 mt-8">{w.title}</h3>
+              <p class="mt-3 text-muted">{w.text}</p>
+              {w.deadlines && w.deadlines.length > 0 && (
+                <dl class="mt-4 space-y-1 text-sm">
+                  {w.deadlines.map((d) => (
+                    <div class="flex gap-2">
+                      <dt class="font-semibold">{d.label}:</dt>
+                      <dd>{d.date}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              <a
+                class:list={['btn mt-auto self-start', w.primary ? 'btn-primary' : 'btn-secondary']}
+                href={w.href}
+                {...(w.external ? { target: '_blank', rel: 'noopener' } : {})}
+              >
+                {w.cta}
+                {w.external && <span class="sr-only">(opens in a new tab)</span>}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div
+        id="newsletter"
+        class="mt-5 grid gap-8 rounded-[4px] border border-line bg-white p-7 sm:p-9 lg:grid-cols-12 lg:items-center"
+        data-reveal
+      >
+        <div class="lg:col-span-6">
+          <h3 class="h3">Subscribe to the newsletter</h3>
+          <p class="mt-2 max-w-[48ch] text-muted">Events, programs and opportunities, straight to your inbox.</p>
+        </div>
+        <NewsletterForm id="newsletter-about" class="lg:col-span-6" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .subnav {
+    position: sticky;
+    top: 5rem; /* header: 4rem bar + 2 × 0.5rem padding */
+    z-index: 40;
+    border-block: 1px solid var(--color-line);
+    background: rgb(255 255 255 / 0.94);
+    backdrop-filter: blur(10px);
+  }
+  .subnav-list {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: -0.5rem;
+  }
+  .subnav-list::-webkit-scrollbar {
+    display: none;
+  }
+  .subnav-link {
+    position: relative;
+    display: block;
+    padding: 0.95rem 0.75rem;
+    white-space: nowrap;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    transition: color 160ms;
+  }
+  .subnav-link:hover,
+  .subnav-link[aria-current='true'] {
+    color: var(--color-ink);
+  }
+  .subnav-link[aria-current='true']::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--color-pink-600);
+  }
+
+  /* Timeline: a hairline with a dot per stage; vertical on small screens. */
+  .timeline {
+    display: grid;
+    gap: 2rem;
+    counter-reset: step;
+  }
+  .timeline-step {
+    position: relative;
+    padding-left: 1.75rem;
+    border-left: 1px solid var(--color-line-strong);
+  }
+  .timeline-step::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0.3rem;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--color-pink-600);
+  }
+  @media (min-width: 768px) {
+    .timeline {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 2rem;
+    }
+    .timeline-step {
+      padding: 1.75rem 0 0;
+      border-left: 0;
+      border-top: 1px solid var(--color-line-strong);
+    }
+    .timeline-step::before {
+      left: 0;
+      top: -6px;
+    }
+  }
+
+  .flagship {
+    align-self: start;
+    padding: 2rem;
+    border: 1px solid var(--color-line);
+    border-top: 4px solid var(--color-pink-600);
+    border-radius: 4px;
+    background: var(--color-paper-tint);
+  }
+  @media (min-width: 640px) {
+    .flagship {
+      padding: 2.5rem;
+    }
+  }
+
+  .resource {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    background: var(--color-white);
+    transition: border-color 200ms;
+  }
+  .resource:hover {
+    border-color: var(--color-pink-500);
+  }
+  .resource-cover {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-paper-tint);
+  }
+
+  .way {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    background: var(--color-white);
+  }
+  .way > p {
+    margin-bottom: 1.75rem;
+  }
+</style>
+
+<script>
+  // Highlight the sub-nav link for the section currently in view.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('[data-subnav-link]')].map((a) => [a.dataset.subnavLink!, a]),
+  );
+  const list = document.querySelector<HTMLElement>('.subnav-list');
+  const setCurrent = (id: string) => {
+    links.forEach((a, key) => a.setAttribute('aria-current', String(key === id)));
+    // On narrow screens the sub-nav scrolls sideways; keep the active link in view
+    // without touching the page's own (possibly smooth) vertical scroll.
+    const active = links.get(id);
+    if (list && active && list.scrollWidth > list.clientWidth) {
+      list.scrollTo({ left: active.offsetLeft - 16, behavior: 'smooth' });
+    }
+  };
+
+  if ('IntersectionObserver' in window) {
+    const visible = new Set<string>();
+    const order = [...links.keys()];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        const first = order.find((id) => visible.has(id));
+        if (first) setCurrent(first);
+      },
+      { rootMargin: '-35% 0px -55% 0px' },
+    );
+    order.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  }
+</script>

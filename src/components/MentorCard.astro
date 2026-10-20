@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import Glyph from './Glyph.astro';
+import { isDraft } from '../lib/data';
+
+interface Props {
+  entry: CollectionEntry<'mentors'>;
+  index: number;
+}
+const { entry, index } = Astro.props;
+const { data } = entry;
+const placeholderShapes = ['circle', 'arch', 'sparkle', 'quarter'] as const;
+---
+
+<article class="mentor">
+  <div class="mentor-photo">
+    {
+      data.photo ? (
+        <Image
+          src={data.photo}
+          alt={`Portrait of ${data.name}`}
+          widths={[320, 640]}
+          sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 90vw"
+          class="h-full w-full object-cover object-[50%_30%]"
+        />
+      ) : (
+        <Glyph shape={placeholderShapes[index % placeholderShapes.length]} size={72} class="text-pink-100" />
+      )
+    }
+  </div>
+  {isDraft(entry) && <p class="draft-tag">Draft: hidden on the live site</p>}
+  <h3 class="mt-4 text-lg font-bold tracking-[-0.015em]">{data.name}</h3>
+  <p class="text-[0.9375rem] text-muted">{data.title}, {data.firm}</p>
+  {
+    data.linkedin && (
+      <a class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-pink-700 hover:underline" href={data.linkedin} target="_blank" rel="noopener">
+        <Icon name="linkedin" size={16} />
+        LinkedIn<span class="sr-only"> profile of {data.name} (opens in a new tab)</span>
+      </a>
+    )
+  }
+</article>
+
+<style>
+  .mentor-photo {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--color-paper-tint);
+  }
+  .draft-tag {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px dashed var(--color-pink-700);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-pink-700);
+  }
+</style>

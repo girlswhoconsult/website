@@ -1,0 +1,15 @@
+{
+  "email": "girlswhoconsult@gmail.com",
+  "linkedin": "https://www.linkedin.com/company/girls-who-consult",
+  "instagram": "https://www.instagram.com/girlswhoconsult/",
+  "slack": "https://girlswhoconsult.slack.com",
+  "mentorSignupUrl": "",
+  "boardApplication": {
+    "url": "https://forms.gle/HUGEYrujqb912wfW7",
+    "showDeadlines": false,
+    "deadlines": [
+      { "label": "Priority deadline", "date": "June 15" },
+      { "label": "Final deadline", "date": "June 30" }
+    ]
+  }
+}

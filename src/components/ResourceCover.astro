@@ -1,0 +1,28 @@
+---
+/* Cover for resources without a thumbnail: a 2×2 cut of the hero mosaic,
+   rotated by `seed` so neighbouring cards don't match. Decorative. */
+interface Props {
+  seed?: number;
+}
+const { seed = 0 } = Astro.props;
+
+const tiles = [
+  '<path d="M100 100H0A100 100 0 0 1 100 0Z" fill="#F4B6C2"/>',
+  '<path d="M150 8Q156 44 192 50Q156 56 150 92Q144 56 108 50Q144 44 150 8Z" fill="#E95F8C"/>',
+  '<path d="M0 200V150A50 50 0 0 1 100 150V200Z" fill="#E1698F"/>',
+  '<circle cx="150" cy="150" r="46" fill="#FFC4DE"/>',
+];
+const order = [0, 1, 2, 3].map((i) => (i + seed) % 4);
+const positions = ['0,0', '100,0', '0,100', '100,100'];
+const origins = ['0,0', '100,0', '0,100', '100,100'];
+---
+
+<svg viewBox="0 0 200 200" class="h-[62%] w-auto" aria-hidden="true" focusable="false">
+  {
+    order.map((tileIndex, slot) => {
+      const [ox, oy] = origins[tileIndex].split(',').map(Number);
+      const [px, py] = positions[slot].split(',').map(Number);
+      return <g transform={`translate(${px - ox} ${py - oy})`} set:html={tiles[tileIndex]} />;
+    })
+  }
+</svg>

@@ -1,0 +1,207 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Mosaic from '../components/Mosaic.astro';
+import Icon from '../components/Icon.astro';
+import Glyph from '../components/Glyph.astro';
+import StatsBand from '../components/StatsBand.astro';
+import LogoWall from '../components/LogoWall.astro';
+import EventCard from '../components/EventCard.astro';
+import MentorCard from '../components/MentorCard.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import { formatStat, getEvents, getMentors, site, statsBlock } from '../lib/data';
+
+const heroStats = statsBlock.stats.filter((s) => s.showInHero).slice(0, 3);
+const mentors = await getMentors();
+const { upcoming } = await getEvents();
+// Featured events first, then soonest. (sort is stable, so date order holds within each group)
+const teaser = [...upcoming].sort((a, b) => Number(b.data.featured) - Number(a.data.featured)).slice(0, 3);
+
+const pillars = [
+  {
+    icon: 'mentorship',
+    title: 'Mentorship',
+    body: 'One-on-one guidance from mentors, including our flagship program that paired 100 mentors with 100 mentees.',
+  },
+  {
+    icon: 'workshops',
+    title: 'Workshops & case prep',
+    body: 'Up-skilling workshops, hands-on case projects, and casing resources built by our team.',
+  },
+  {
+    icon: 'network',
+    title: 'Networking & pro-bono consulting',
+    body: 'A talent pipeline with consulting firms, pro-bono work for social-impact organizations, and partnerships with college consulting clubs.',
+  },
+];
+---
+
+<BaseLayout title="Home">
+  <!-- Hero -->
+  <section class="overflow-hidden">
+    <div
+      class="container-x grid items-center gap-x-10 gap-y-14 pt-10 pb-20 sm:pt-14 lg:grid-cols-12 lg:pt-20 lg:pb-28"
+    >
+      <div class="lg:col-span-7">
+        <h1 class="display max-w-[13ch]">
+          Empowering the next generation of <span class="text-pink-600">women consultants</span>
+        </h1>
+        <p class="lead mt-7 max-w-[50ch]">
+          Girls Who Consult is a national intercollegiate community on a mission to empower the next generation of
+          women consultants through mentorship, education, and hands-on industry experience.
+        </p>
+        <div class="mt-9 flex flex-wrap gap-3">
+          <a class="btn btn-primary" href="/about#get-involved">Get Involved</a>
+          <a class="btn btn-secondary" href="/about#programs">Our Programs</a>
+        </div>
+        <dl class="mt-14 grid max-w-[32rem] grid-cols-3 gap-4 border-t border-line pt-7">
+          {
+            heroStats.map((s) => (
+              <div class="flex flex-col">
+                <dt class="mt-1 text-sm font-medium text-muted">{s.label}</dt>
+                <dd class="order-first text-[clamp(1.75rem,3vw,2.25rem)] leading-none font-extrabold tracking-[-0.04em] text-pink-600 tabular">
+                  {s.prefix ? `${s.prefix} ` : ''}
+                  {formatStat(s)}
+                  {s.suffix}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+      <div class="lg:col-span-5">
+        <Mosaic class="mx-auto max-w-[26rem] sm:max-w-[30rem] lg:max-w-none" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Our impact -->
+  <section class="section bg-paper-tint" aria-labelledby="impact-heading">
+    <div class="container-x">
+      <div class="mx-auto max-w-[46rem] text-center" data-reveal>
+        <p class="eyebrow">Our impact</p>
+        <h2 id="impact-heading" class="h2 mt-4">Mentorship, education, and real industry experience</h2>
+        <p class="lead mt-6">
+          We provide professional mentorship, up-skilling workshops, hands-on case projects and casing resources, and
+          networking opportunities.
+        </p>
+      </div>
+      <ul class="mt-16 grid gap-12 md:grid-cols-3 md:gap-8 lg:gap-12" role="list" data-reveal>
+        {
+          pillars.map((p) => (
+            <li class="border-t-2 border-ink pt-7">
+              <Icon name={p.icon} size={34} class="text-pink-600" />
+              <h3 class="h3 mt-5">{p.title}</h3>
+              <p class="mt-3 text-muted">{p.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <StatsBand />
+
+  <!-- Mentors: hidden automatically until real (non-draft) mentors exist -->
+  {
+    mentors.length > 0 && (
+      <section class="section" aria-labelledby="mentors-heading">
+        <div class="container-x">
+          <div class="mx-auto max-w-[44rem] text-center" data-reveal>
+            <p class="eyebrow">Meet our mentors</p>
+            <h2 id="mentors-heading" class="h2 mt-4">
+              Guidance from people already in the field
+            </h2>
+          </div>
+          <ul class="mt-14 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4" role="list" data-reveal>
+            {mentors.map((m, i) => (
+              <li>
+                <MentorCard entry={m} index={i} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Alumni logo wall -->
+  <section class:list={['section', { 'border-t border-line': mentors.length > 0 }]} aria-labelledby="alumni-heading">
+    <div class="container-x">
+      <h2
+        id="alumni-heading"
+        class="mx-auto max-w-[26ch] text-center text-[clamp(1.75rem,3.2vw,2.5rem)] leading-[1.12]"
+        data-reveal
+      >
+        Girls Who Consult alumni work for the world’s leading firms & companies.
+      </h2>
+      <div class="mt-12 lg:mt-14" data-reveal>
+        <LogoWall />
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming events teaser -->
+  <section class="section bg-paper-tint" aria-labelledby="events-heading">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
+        <div>
+          <h2 id="events-heading" class="h2">Upcoming events</h2>
+          {upcoming.length > 0 && <p class="lead mt-4 max-w-[46ch]">Sign up for what’s coming next.</p>}
+        </div>
+        <a class="link" href="/about#events">See all events</a>
+      </div>
+
+      {
+        upcoming.length > 0 ? (
+          <div class="mt-10 border-b border-line" data-reveal>
+            {teaser.map((e) => (
+              <EventCard entry={e} compact />
+            ))}
+          </div>
+        ) : (
+          <div class="mt-10 grid items-center gap-6 border-t border-line pt-8 md:grid-cols-[1fr_auto]" data-reveal>
+            <div>
+              <p class="text-xl font-bold tracking-[-0.015em]">No upcoming events are scheduled right now.</p>
+              <p class="mt-2 text-muted">New events are announced on Instagram and in our newsletter.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <a class="btn btn-secondary" href={site.instagram} target="_blank" rel="noopener">
+                Follow on Instagram
+              </a>
+              <a class="btn btn-tertiary" href="/contact#newsletter">
+                Get the newsletter
+              </a>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="section" aria-labelledby="join-heading">
+    <div class="container-x">
+      <div
+        class="relative isolate grid gap-12 overflow-hidden rounded-md bg-pink-50 px-6 py-14 sm:px-12 lg:grid-cols-12 lg:items-center lg:px-16 lg:py-20"
+      >
+        <Glyph
+          shape="quarter"
+          size={280}
+          class="pointer-events-none absolute -right-px -bottom-px -z-10 hidden text-pink-100 md:block"
+        />
+        <div class="lg:col-span-6">
+          <h2 id="join-heading" class="h2">Join the GWC community</h2>
+          <p class="mt-5 max-w-[40ch] text-lg">
+            Mentorship, case prep, and a network of women headed into consulting.
+          </p>
+          <a class="btn btn-primary mt-8" href="/about#get-involved">Get Involved</a>
+        </div>
+        <div class="lg:col-span-5 lg:col-start-8">
+          <p class="text-lg font-bold tracking-[-0.01em]">Get the newsletter</p>
+          <p class="mt-1 mb-5">Events, programs and opportunities, straight to your inbox.</p>
+          <NewsletterForm id="newsletter-cta" />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

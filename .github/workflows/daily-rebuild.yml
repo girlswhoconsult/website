@@ -1,0 +1,23 @@
+# Rebuilds the site every morning so events whose date has passed move from
+# "Upcoming" to "Past". Needs a Netlify build hook saved as the repository
+# secret NETLIFY_BUILD_HOOK (see README → "Daily rebuild").
+name: Daily rebuild
+
+on:
+  schedule:
+    - cron: "0 9 * * *" # 09:00 UTC, early morning Eastern Time
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify build hook
+        env:
+          HOOK: ${{ secrets.NETLIFY_BUILD_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "NETLIFY_BUILD_HOOK is not set; skipping."
+            exit 0
+          fi
+          curl -fsS -X POST -d '{}' "$HOOK"

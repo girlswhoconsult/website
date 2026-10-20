@@ -1,0 +1,12 @@
+{
+  "heading": "By the Numbers",
+  "intro": "What the GWC community has built since 2020.",
+  "stats": [
+    { "value": 2000, "suffix": "+", "label": "Members", "caption": "Students in our national, intercollegiate community.", "icon": "members", "showInHero": true },
+    { "value": 100, "suffix": "+", "label": "Mentors", "caption": "Professionals who give members one-on-one guidance.", "icon": "mentors", "showInHero": true },
+    { "value": 3, "label": "National events", "caption": "Open to members nationwide.", "icon": "events", "showInHero": true },
+    { "value": 100, "label": "Mentor–mentee pairs", "caption": "Matched one-to-one in our flagship mentorship program.", "icon": "pairs" },
+    { "value": 8, "unit": "weeks", "label": "Professional curriculum", "caption": "Completed by each mentee alongside their mentor.", "icon": "weeks" },
+    { "value": 2020, "prefix": "Since", "label": "Founded", "caption": "Started during the Covid-19 pandemic as a 5-week training program.", "icon": "founded", "kind": "year" }
+  ]
+}

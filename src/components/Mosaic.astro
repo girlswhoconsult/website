@@ -1,0 +1,53 @@
+---
+/* Hero shape mosaic: a 3×3 grid of 200-unit tiles in the brand palette,
+   after the Design Academy reference. The top-middle tile is the sparkle
+   pair from the GWC logo. Decorative only. */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg
+  class:list={['mosaic', className]}
+  viewBox="0 0 600 600"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+  focusable="false"
+>
+  <g class="tile" style="--i:0"><path d="M200 200H0A200 200 0 0 1 200 0Z" fill="#F4B6C2"></path></g>
+  <g class="tile" style="--i:3">
+    <path d="M300 18Q312 88 382 100Q312 112 300 182Q288 112 218 100Q288 88 300 18Z" fill="#E95F8C"></path>
+    <path d="M372 16Q375 33 392 36Q375 39 372 56Q369 39 352 36Q369 33 372 16Z" fill="#E1698F"></path>
+  </g>
+  <g class="tile" style="--i:1"><path d="M400 0A200 200 0 0 1 400 400Z" fill="#FFC4DE"></path></g>
+  <g class="tile" style="--i:2"><rect x="35" y="235" width="130" height="130" fill="none" stroke="#E1698F" stroke-width="30"></rect></g>
+  <g class="tile" style="--i:4"><circle cx="300" cy="300" r="92" fill="#E95F8C"></circle></g>
+  <g class="tile" style="--i:5"><path d="M0 600V500A100 100 0 0 1 200 500V600Z" fill="#E1698F"></path></g>
+  <g class="tile" style="--i:6">
+    <path d="M300 432 380 574H220Z" fill="none" stroke="#E95F8C" stroke-width="26" stroke-linejoin="miter"></path>
+  </g>
+  <g class="tile" style="--i:7"><path d="M400 600V400A200 200 0 0 1 600 600Z" fill="#FFC8D3"></path></g>
+</svg>
+
+<style>
+  .mosaic {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .tile {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: tile-in 800ms var(--ease-out-soft) both;
+      animation-delay: calc(var(--i) * 70ms + 120ms);
+    }
+    @keyframes tile-in {
+      from {
+        opacity: 0;
+        transform: scale(0.82);
+      }
+    }
+  }
+</style>

@@ -1,0 +1,195 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/gwc-logo.png';
+import Icon from './Icon.astro';
+import { site } from '../lib/data';
+
+// Flat navigation: no dropdowns anywhere (brief §4).
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/team', label: 'Meet the Team' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isActive = (href: string) => (href === '/' ? current === '/' : current.startsWith(href));
+---
+
+<header class="site-header sticky top-0 z-50 bg-white py-2">
+  <div class="container-x">
+    <div
+      class="relative z-10 flex h-16 items-center justify-between gap-6 rounded-md border border-line bg-white/92 pr-2 pl-4 backdrop-blur-md sm:pl-5"
+    >
+      <a href="/" class="shrink-0 rounded-sm">
+        <Image
+          src={logo}
+          alt="Girls Who Consult home"
+          width={132}
+          widths={[132, 264]}
+          sizes="132px"
+          loading="eager"
+          fetchpriority="high"
+          class="h-auto w-[112px] sm:w-[132px]"
+        />
+      </a>
+
+      <nav aria-label="Main" class="hidden lg:block">
+        <ul class="flex items-center gap-1">
+          {
+            links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class:list={['nav-link', { 'is-active': isActive(link.href) }]}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="/about#get-involved" class="btn btn-primary btn-sm hidden sm:inline-flex">Get Involved</a>
+        <button
+          type="button"
+          class="menu-toggle lg:hidden"
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+          data-menu-toggle
+        >
+          <span class="menu-icon-open"><Icon name="menu" size={22} /></span>
+          <span class="menu-icon-close"><Icon name="close" size={22} /></span>
+          <span data-menu-label>Menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="mobile-nav" class="mobile-nav lg:hidden" hidden data-menu>
+    <nav aria-label="Main" class="container-x flex h-full flex-col pt-28 pb-8">
+      <ul class="flex flex-col">
+        {
+          links.map((link) => (
+            <li class="border-b border-line">
+              <a
+                href={link.href}
+                class:list={['mobile-link', { 'is-active': isActive(link.href) }]}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/about#get-involved" class="btn btn-primary mt-8 w-full">Get Involved</a>
+      <p class="mt-auto pt-10 text-sm text-muted">
+        Questions? <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    transition: color 160ms;
+  }
+  .nav-link:hover,
+  .nav-link.is-active {
+    color: var(--color-ink);
+  }
+  .nav-link.is-active::after {
+    content: '';
+    position: absolute;
+    left: 0.875rem;
+    right: 0.875rem;
+    bottom: -0.875rem;
+    height: 2px;
+    background: var(--color-pink-600);
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border-radius: 4px;
+    font-size: 0.9375rem;
+    font-weight: 650;
+  }
+  .menu-toggle:hover {
+    background: var(--color-paper-tint);
+  }
+  /* Scoped styles are unlayered and beat Tailwind's lg:hidden, so hide here. */
+  @media (min-width: 1024px) {
+    .menu-toggle {
+      display: none;
+    }
+  }
+  .menu-icon-close,
+  .menu-toggle[aria-expanded='true'] .menu-icon-open {
+    display: none;
+  }
+  .menu-toggle[aria-expanded='true'] .menu-icon-close {
+    display: inline;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: var(--color-white);
+    overflow-y: auto;
+  }
+  .mobile-link {
+    display: block;
+    padding: 1.125rem 0;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .mobile-link.is-active {
+    color: var(--color-pink-700);
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const label = document.querySelector<HTMLElement>('[data-menu-label]');
+
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (label) label.textContent = open ? 'Close' : 'Menu';
+      if (open) menu.querySelector<HTMLElement>('a')?.focus();
+    };
+
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !menu.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    // Close if the viewport grows past the mobile breakpoint while open.
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && setOpen(false));
+  }
+</script>

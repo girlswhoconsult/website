@@ -1,0 +1,107 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/gwc-logo.png';
+import Icon from './Icon.astro';
+import NewsletterForm from './NewsletterForm.astro';
+import { site } from '../lib/data';
+
+const pages = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/team', label: 'Meet the Team' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/about#get-involved', label: 'Get Involved' },
+];
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-ink text-white">
+  <div class="container-x pt-20 pb-10">
+    <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+      <div class="lg:col-span-3">
+        <Image src={logo} alt="Girls Who Consult" width={168} widths={[168, 336]} sizes="168px" class="h-auto w-[168px]" />
+        <p class="mt-6 max-w-[34ch] text-white/75">
+          Empowering the next generation of women consultants through mentorship, education, and hands-on industry
+          experience.
+        </p>
+        <ul class="mt-7 flex gap-2" aria-label="Social media">
+          <li>
+            <a class="social" href={site.instagram} rel="noopener" target="_blank">
+              <Icon name="instagram" size={20} />
+              <span class="sr-only">Instagram (opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <a class="social" href={site.linkedin} rel="noopener" target="_blank">
+              <Icon name="linkedin" size={20} />
+              <span class="sr-only">LinkedIn (opens in a new tab)</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <nav aria-label="Footer" class="lg:col-span-2">
+        <h2 class="footer-heading">Pages</h2>
+        <ul class="mt-4 space-y-2.5">
+          {pages.map((p) => <li><a class="footer-link" href={p.href}>{p.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="lg:col-span-3">
+        <h2 class="footer-heading">Contact</h2>
+        <ul class="mt-4 space-y-2.5">
+          <li><a class="footer-link" href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li><a class="footer-link" href={site.slack} rel="noopener" target="_blank">Slack community</a></li>
+          <li><a class="footer-link" href={site.linkedin} rel="noopener" target="_blank">LinkedIn</a></li>
+          <li><a class="footer-link" href={site.instagram} rel="noopener" target="_blank">Instagram</a></li>
+        </ul>
+      </div>
+
+      <div class="md:col-span-2 lg:col-span-4">
+        <h2 class="footer-heading">Newsletter</h2>
+        <p class="mt-4 mb-5 text-white/75">Events, programs and opportunities, straight to your inbox.</p>
+        <NewsletterForm id="newsletter-footer" tone="dark" />
+      </div>
+    </div>
+
+    <div class="mt-16 flex flex-col gap-2 border-t border-white/15 pt-6 text-sm text-white/65 sm:flex-row sm:justify-between">
+      <p>© {year} Girls Who Consult</p>
+      <p>A national intercollegiate community, since 2020.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-heading {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    color: var(--color-white);
+  }
+  .footer-link {
+    color: rgb(255 255 255 / 0.75);
+    transition: color 160ms;
+  }
+  .footer-link:hover {
+    color: var(--color-pink-600);
+  }
+  .social {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid rgb(255 255 255 / 0.25);
+    border-radius: 4px;
+    color: var(--color-white);
+    transition:
+      border-color 160ms,
+      color 160ms;
+  }
+  .social:hover {
+    border-color: var(--color-pink-600);
+    color: var(--color-pink-600);
+  }
+  footer :focus-visible {
+    outline-color: var(--color-pink-600);
+  }
+</style>

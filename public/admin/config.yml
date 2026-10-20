@@ -1,0 +1,279 @@
+# Decap CMS configuration: https://decapcms.org/docs/configuration-options/
+# Field names here must match the schemas in src/content.config.ts and src/lib/data.ts.
+
+backend:
+  name: github
+  repo: girlswhoconsult/website
+  branch: main
+  # Netlify handles the GitHub login handshake. See README → "Content manager".
+
+# Edit content on your own computer without logging in:
+# run `npx decap-server` next to `npm run dev`, then open http://localhost:4321/admin/
+local_backend: true
+
+logo_url: /favicon.svg
+
+# Default upload folder; each collection below overrides it so images land next to
+# the content that uses them. public_folder is the path written into the content
+# file, relative to that file, which is what Astro's image optimizer expects.
+media_folder: src/assets/uploads
+public_folder: ../../assets/uploads
+
+collections:
+  # ------------------------------------------------------------------ Events
+  - name: events
+    label: Events
+    label_singular: Event
+    description: >
+      Events sort themselves: once an event's date has passed it moves from "Upcoming" to "Past"
+      on the next daily rebuild. Times show on the site in Eastern Time.
+    folder: src/content/events
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    media_folder: /src/assets/events
+    public_folder: ../../assets/events
+    sortable_fields: ["date", "title"]
+    summary: "{{title}} ({{date | date('MMM D, YYYY')}})"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - label: Start date & time
+        name: date
+        widget: datetime
+        format: "YYYY-MM-DDTHH:mm:ssZ"
+      - label: End date & time
+        name: endDate
+        widget: datetime
+        format: "YYYY-MM-DDTHH:mm:ssZ"
+        required: false
+      - label: Location
+        name: location
+        widget: string
+        default: Virtual
+        hint: Type "Virtual" for online events, or the address for in-person events.
+      - { label: Short description, name: description, widget: text }
+      - label: Sign-up link
+        name: signupUrl
+        widget: string
+        required: false
+        hint: Google Form, Luma, etc. Leave empty to show "Sign-up link coming soon".
+        pattern: ["^https?://", "Must start with https://"]
+      - { label: Image, name: image, widget: image, required: false, choose_url: false }
+      - label: Image description
+        name: imageAlt
+        widget: string
+        required: false
+        hint: Describe the image for screen readers (e.g. "Panelists on stage at the spring summit").
+      - { label: Partner firm, name: partner, widget: string, required: false }
+      - label: Featured
+        name: featured
+        widget: boolean
+        default: false
+        required: false
+        hint: Featured upcoming events are listed first on the home page.
+      - label: Hide date on the site
+        name: hideDate
+        widget: boolean
+        default: false
+        required: false
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: Drafts never appear on the live site.
+      - label: Recap
+        name: body
+        widget: markdown
+        required: false
+        hint: Shown once the event is in "Past events".
+        buttons: [bold, italic, link, bulleted-list]
+        editor_components: []
+
+  # ------------------------------------------------------------------ Team
+  - name: team
+    label: Team
+    label_singular: Board member
+    folder: src/content/team
+    create: true
+    identifier_field: name
+    slug: "{{slug}}"
+    media_folder: /src/assets/team
+    public_folder: ../../assets/team
+    sortable_fields: ["order", "name"]
+    summary: "{{order}}. {{name}} ({{role}})"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Role, name: role, widget: string }
+      - { label: School, name: school, widget: string }
+      - { label: Bio, name: bio, widget: text, hint: "2–3 sentences in the third person: school & major, experience or goals, interests." }
+      - label: Headshot
+        name: photo
+        widget: image
+        choose_url: false
+        hint: A portrait photo works best; it is cropped to 4:5 around the upper third.
+      - { label: LinkedIn URL, name: linkedin, widget: string, required: false }
+      - { label: Order on page, name: order, widget: number, value_type: int, min: 0 }
+      - label: Show as founder
+        name: founder
+        widget: boolean
+        default: false
+        required: false
+        hint: Founders appear in their own card above the board.
+
+  # ------------------------------------------------------------------ Mentors
+  - name: mentors
+    label: Mentors
+    label_singular: Mentor
+    description: The "Meet our mentors" section on the home page appears once at least one mentor is published (not a draft).
+    folder: src/content/mentors
+    create: true
+    identifier_field: name
+    slug: "{{slug}}"
+    media_folder: /src/assets/mentors
+    public_folder: ../../assets/mentors
+    sortable_fields: ["order", "name"]
+    summary: "{{order}}. {{name}} ({{firm}})"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Firm, name: firm, widget: string }
+      - { label: Title, name: title, widget: string }
+      - { label: Photo, name: photo, widget: image, required: false, choose_url: false }
+      - { label: LinkedIn URL, name: linkedin, widget: string, required: false }
+      - { label: Order on page, name: order, widget: number, value_type: int, min: 0 }
+      - { label: Draft, name: draft, widget: boolean, default: false, required: false, hint: Drafts never appear on the live site. }
+
+  # ------------------------------------------------------------------ Programs
+  - name: programs
+    label: Programs
+    label_singular: Program
+    folder: src/content/programs
+    create: true
+    identifier_field: name
+    slug: "{{slug}}"
+    sortable_fields: ["order", "name"]
+    summary: "{{order}}. {{name}}"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Description, name: description, widget: text }
+      - label: Icon
+        name: icon
+        widget: select
+        required: false
+        options: [mentorship, workshops, network, trophy, megaphone, chat, buddies, events, members, mentors]
+      - label: Flagship program
+        name: flagship
+        widget: boolean
+        default: false
+        required: false
+        hint: Shown in the large panel. Use for one program only.
+      - { label: Highlights, name: highlights, widget: list, required: false, hint: Short facts for the flagship panel. }
+      - { label: Order, name: order, widget: number, value_type: int, min: 0 }
+
+  # ------------------------------------------------------------------ Resources
+  - name: resources
+    label: Resources
+    label_singular: Resource
+    folder: src/content/resources
+    create: true
+    identifier_field: title
+    slug: "{{slug}}"
+    media_folder: /src/assets/resources
+    public_folder: ../../assets/resources
+    sortable_fields: ["order", "title"]
+    summary: "{{order}}. {{title}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Description, name: description, widget: text }
+      - { label: Link, name: url, widget: string, pattern: ["^https?://", "Must start with https://"] }
+      - { label: Button text, name: cta, widget: string, default: Open resource }
+      - { label: Thumbnail, name: thumbnail, widget: image, required: false, choose_url: false }
+      - { label: Thumbnail description, name: thumbnailAlt, widget: string, required: false, hint: Leave empty if the image is decorative. }
+      - { label: Order, name: order, widget: number, value_type: int, min: 0 }
+
+  # ------------------------------------------------------------------ Alumni logos
+  - name: alumniLogos
+    label: Alumni logos
+    label_singular: Logo
+    folder: src/content/alumni-logos
+    create: true
+    identifier_field: name
+    slug: "{{slug}}"
+    media_folder: /src/assets/logos
+    public_folder: ../../assets/logos
+    sortable_fields: ["order", "name"]
+    summary: "{{order}}. {{name}}"
+    fields:
+      - { label: Company name, name: name, widget: string }
+      - { label: Logo, name: logo, widget: image, choose_url: false, hint: PNG with a transparent background, or SVG. Trim empty space around the logo. }
+      - label: Size adjustment
+        name: scale
+        widget: number
+        value_type: float
+        default: 1
+        min: 0.5
+        max: 2
+        step: 0.05
+        hint: 1 is normal. Nudge up (e.g. 1.2) if this logo looks small next to the others.
+      - { label: Order, name: order, widget: number, value_type: int, min: 0 }
+
+  # ------------------------------------------------------------------ Settings
+  - name: settings
+    label: Site settings
+    editor:
+      preview: false
+    files:
+      - name: stats
+        label: By the Numbers
+        file: src/content/stats.json
+        fields:
+          - { label: Heading, name: heading, widget: string }
+          - { label: Intro line, name: intro, widget: string }
+          - label: Stats
+            name: stats
+            widget: list
+            summary: "{{fields.value}}{{fields.suffix}} {{fields.label}}"
+            fields:
+              - { label: Number, name: value, widget: number, value_type: int }
+              - { label: Text before the number, name: prefix, widget: string, required: false, hint: 'e.g. "Since"' }
+              - { label: Symbol after the number, name: suffix, widget: string, required: false, hint: 'e.g. "+"' }
+              - { label: Unit, name: unit, widget: string, required: false, hint: 'e.g. "weeks"' }
+              - { label: Label, name: label, widget: string }
+              - { label: What this means, name: caption, widget: string }
+              - label: Icon
+                name: icon
+                widget: select
+                options: [members, mentors, events, pairs, weeks, founded, mentorship, workshops, network]
+              - { label: Also show in the home page hero, name: showInHero, widget: boolean, default: false, required: false }
+              - label: Kind
+                name: kind
+                widget: select
+                default: number
+                options:
+                  - { label: "Number (counts up, shows commas)", value: number }
+                  - { label: "Year (shown as written)", value: year }
+      - name: site
+        label: Contact & links
+        file: src/content/site.json
+        fields:
+          - { label: Email, name: email, widget: string }
+          - { label: LinkedIn URL, name: linkedin, widget: string }
+          - { label: Instagram URL, name: instagram, widget: string }
+          - { label: Slack URL, name: slack, widget: string }
+          - label: Mentor sign-up form
+            name: mentorSignupUrl
+            widget: string
+            required: false
+            hint: Leave empty to have "Become a mentor" open an email instead.
+          - label: Board application
+            name: boardApplication
+            widget: object
+            fields:
+              - { label: Application form URL, name: url, widget: string }
+              - { label: Show deadlines, name: showDeadlines, widget: boolean, default: false }
+              - label: Deadlines
+                name: deadlines
+                widget: list
+                required: false
+                fields:
+                  - { label: Label, name: label, widget: string }
+                  - { label: Date, name: date, widget: string, hint: 'e.g. "June 15"' }

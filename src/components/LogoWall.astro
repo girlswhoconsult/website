@@ -1,0 +1,95 @@
+---
+import { Image } from 'astro:assets';
+import { getOrdered } from '../lib/data';
+
+const logos = await getOrdered('alumniLogos');
+
+/* Size every logo to roughly the same visual area so wide wordmarks and
+   square marks carry equal weight, within a max box. */
+const AREA = 2900;
+const MAX_W = 150;
+const MAX_H = 58;
+const fit = (w: number, h: number, scale: number) => {
+  const ratio = w / h;
+  let width = Math.sqrt(AREA * ratio) * scale;
+  let height = width / ratio;
+  if (width > MAX_W) [width, height] = [MAX_W, MAX_W / ratio];
+  if (height > MAX_H) [width, height] = [MAX_H * ratio, MAX_H];
+  return { width: Math.round(width), height: Math.round(height) };
+};
+---
+
+<ul class="logo-grid" role="list">
+  {
+    logos.map(({ data }) => {
+      const { width, height } = fit(data.logo.width, data.logo.height, data.scale);
+      const raster = data.logo.format !== 'svg';
+      return (
+        <li class="logo-cell">
+          <Image
+            src={data.logo}
+            alt={data.name}
+            width={width}
+            height={height}
+            {...(raster ? { widths: [width, width * 2], sizes: `${width}px` } : {})}
+            class="logo-img"
+            style={`--logo-w:${width}px`}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+  }
+  @media (min-width: 768px) {
+    .logo-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .logo-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+  .logo-cell {
+    display: grid;
+    place-items: center;
+    min-height: 6.5rem;
+    padding: 1.25rem 0.75rem;
+    background: var(--color-white);
+  }
+  @media (min-width: 1024px) {
+    .logo-cell {
+      min-height: 8rem;
+    }
+  }
+  .logo-img {
+    width: var(--logo-w);
+    max-width: 84%;
+    height: auto;
+    filter: grayscale(1) contrast(1.05);
+    opacity: 0.78;
+    transition:
+      filter 240ms var(--ease-out-soft),
+      opacity 240ms var(--ease-out-soft);
+  }
+  .logo-cell:hover .logo-img {
+    filter: none;
+    opacity: 1;
+  }
+  @media (max-width: 639px) {
+    .logo-img {
+      width: calc(var(--logo-w) * 0.78);
+    }
+  }
+</style>

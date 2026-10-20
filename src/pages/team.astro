@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TeamCard from '../components/TeamCard.astro';
+import Icon from '../components/Icon.astro';
+import { getTeam } from '../lib/data';
+
+const { founders, board } = await getTeam();
+---
+
+<BaseLayout
+  title="Meet the Team"
+  description="Meet the Girls Who Consult executive board: the students who run our programs, outreach, marketing, and technology."
+>
+  <section class="container-x pt-10 pb-12 sm:pt-14 lg:pt-20 lg:pb-16">
+    <div class="grid gap-8 lg:grid-cols-12 lg:items-end">
+      <h1 class="page-title lg:col-span-7">Meet Our Executive Board</h1>
+      <p class="lead lg:col-span-5">
+        The students behind Girls Who Consult’s programs, outreach, marketing, and technology.
+      </p>
+    </div>
+  </section>
+
+  {
+    founders.map((f) => (
+      <section class="container-x" aria-label="Founder">
+        <article class="founder grid gap-8 border-y border-line py-10 sm:grid-cols-[13rem_1fr] sm:items-center lg:grid-cols-[15rem_1fr] lg:gap-14">
+          <Image
+            src={f.data.photo}
+            alt={`Portrait of ${f.data.name}`}
+            widths={[240, 480]}
+            sizes="240px"
+            class="aspect-[4/5] w-full max-w-[15rem] rounded-[4px] object-cover"
+          />
+          <div>
+            <p class="text-sm font-bold text-pink-700">{f.data.role}</p>
+            <h2 class="mt-2 text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.05]">{f.data.name}</h2>
+            <p class="mt-2 text-muted">{f.data.school}</p>
+            <p class="mt-5 max-w-[60ch] text-lg">{f.data.bio}</p>
+            {f.data.linkedin && (
+              <a class="link mt-5 inline-flex items-center gap-2" href={f.data.linkedin} target="_blank" rel="noopener">
+                <Icon name="linkedin" size={16} /> LinkedIn
+                <span class="sr-only">(opens in a new tab)</span>
+              </a>
+            )}
+          </div>
+        </article>
+      </section>
+    ))
+  }
+
+  <section class="section pt-14 lg:pt-20" aria-labelledby="board-heading">
+    <div class="container-x">
+      <h2 id="board-heading" class="sr-only">Executive board</h2>
+      <ul class="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3" role="list">
+        {
+          board.map((m) => (
+            <li>
+              <TeamCard entry={m} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+</style>

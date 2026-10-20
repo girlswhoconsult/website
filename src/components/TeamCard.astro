@@ -1,0 +1,100 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
+interface Props {
+  entry: CollectionEntry<'team'>;
+}
+const { entry } = Astro.props;
+const { data } = entry;
+const bioId = `bio-${entry.id}`;
+const clamp = data.bio.length > 160;
+---
+
+<article class="member">
+  <Image
+    src={data.photo}
+    alt={`Headshot of ${data.name}`}
+    widths={[320, 480, 720]}
+    sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 92vw"
+    class="aspect-[4/5] w-full rounded-[4px] bg-paper-tint object-cover object-[50%_30%]"
+  />
+  <div class="mt-5 flex items-start justify-between gap-4">
+    <div>
+      <h3 class="text-xl font-bold tracking-[-0.02em]">{data.name}</h3>
+      <p class="mt-1 text-[0.9375rem] font-semibold text-pink-700">{data.role}</p>
+      <p class="text-[0.9375rem] text-muted">{data.school}</p>
+    </div>
+    {
+      data.linkedin && (
+        <a class="linkedin" href={data.linkedin} target="_blank" rel="noopener">
+          <Icon name="linkedin" size={18} />
+          <span class="sr-only">LinkedIn profile of {data.name} (opens in a new tab)</span>
+        </a>
+      )
+    }
+  </div>
+  <p id={bioId} class:list={['bio mt-4 text-[0.9375rem]', { 'is-clamped': clamp }]}>{data.bio}</p>
+  {
+    clamp && (
+      <button type="button" class="bio-toggle" aria-expanded="false" aria-controls={bioId} data-bio-toggle>
+        Read full bio
+      </button>
+    )
+  }
+</article>
+
+<style>
+  .bio {
+    color: var(--color-ink);
+    line-height: 1.6;
+  }
+  .bio.is-clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .bio-toggle {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: var(--color-pink-700);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-color: color-mix(in srgb, var(--color-pink-700) 40%, transparent);
+  }
+  .bio-toggle:hover {
+    text-decoration-color: currentColor;
+  }
+  .linkedin {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 4px;
+    color: var(--color-ink);
+    transition:
+      border-color 160ms,
+      color 160ms;
+  }
+  .linkedin:hover {
+    border-color: var(--color-pink-700);
+    color: var(--color-pink-700);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-bio-toggle]').forEach((button) => {
+    const bio = document.getElementById(button.getAttribute('aria-controls')!);
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!expanded));
+      bio?.classList.toggle('is-clamped', expanded);
+      button.textContent = expanded ? 'Read full bio' : 'Show less';
+    });
+  });
+</script>

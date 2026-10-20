@@ -1,0 +1,7 @@
+# Old Wix paths → new pages (only matter if the old domain is pointed at this site).
+/our-programs              /about#programs       301
+/copy-of-our-ambassadors   /team                 301
+/services-4                /about#resources      301
+/get-involved              /about#get-involved   301
+/about-3                   /about#events         301
+/services-3                /about#get-involved   301

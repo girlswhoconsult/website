@@ -1,0 +1,197 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Glyph from '../components/Glyph.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import { site } from '../lib/data';
+
+const channels = [
+  { label: 'LinkedIn', value: 'Girls Who Consult', href: site.linkedin, icon: 'linkedin' },
+  { label: 'Instagram', value: '@girlswhoconsult', href: site.instagram, icon: 'instagram' },
+  { label: 'Slack community', value: site.slack.replace(/^https?:\/\//, ''), href: site.slack, icon: 'chat' },
+];
+const interests = ['Member', 'Mentor', 'Partner', 'Other'];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Get in touch with Girls Who Consult about membership, mentoring, partnerships, or anything else."
+>
+  <section class="container-x grid gap-14 pt-10 pb-20 sm:pt-14 lg:grid-cols-12 lg:gap-10 lg:pt-20 lg:pb-28">
+    <div class="lg:col-span-5">
+      <h1 class="page-title">Get in Touch</h1>
+      <p class="lead mt-6 max-w-[42ch]">
+        Want to be a member? Want to be a mentor? Have any questions? Reach out — we’d love to hear from you.
+      </p>
+
+      <ul class="mt-12 border-t-2 border-ink" role="list">
+        <li class="flex flex-wrap items-center justify-between gap-4 border-b border-line py-5">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-muted">Email</p>
+            <a class="text-lg font-bold tracking-[-0.01em] hover:text-pink-700" href={`mailto:${site.email}`}
+              >{site.email}</a
+            >
+          </div>
+          <button type="button" class="btn btn-tertiary btn-sm" data-copy={site.email}>
+            <Icon name="copy" size={16} />
+            <span data-copy-label>Copy email</span>
+          </button>
+        </li>
+        {
+          channels.map((c) => (
+            <li class="border-b border-line">
+              <a class="channel group" href={c.href} target="_blank" rel="noopener">
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold text-muted">{c.label}</span>
+                  <span class="block truncate text-lg font-bold tracking-[-0.01em] group-hover:text-pink-700">
+                    {c.value}
+                  </span>
+                </span>
+                <span class="channel-icon">
+                  <Icon name={c.icon} size={18} />
+                </span>
+                <span class="sr-only">(opens in a new tab)</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="lg:col-span-6 lg:col-start-7">
+      <div class="rounded-[4px] border border-line bg-white p-6 sm:p-10">
+        <h2 class="h3">Send us a message</h2>
+        <p class="mt-2 text-muted">Tell us a little about what you’re looking for.</p>
+
+        <form
+          name="contact"
+          method="post"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          data-enhance="netlify"
+          data-success="Message sent. Thanks for reaching out."
+          data-error={`That didn't go through. Try again, or email ${site.email}.`}
+          class="mt-8 space-y-6"
+        >
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hidden">
+            <label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+          </p>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label class="label" for="contact-name">Name</label>
+              <input class="field" id="contact-name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div>
+              <label class="label" for="contact-email">Email</label>
+              <input class="field" id="contact-email" name="email" type="email" autocomplete="email" required />
+            </div>
+          </div>
+
+          <fieldset>
+            <legend class="label">I’m interested in</legend>
+            <div class="flex flex-wrap gap-2">
+              {
+                interests.map((option, i) => (
+                  <label class="chip">
+                    <input type="radio" name="interest" value={option} checked={i === 0} class="sr-only" />
+                    <span>{option}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div>
+            <label class="label" for="contact-message">Message</label>
+            <textarea class="field min-h-[9rem] resize-y" id="contact-message" name="message" rows="5" required
+            ></textarea>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button type="submit" class="btn btn-primary">Send message</button>
+            <p class="text-sm" role="status" aria-live="polite" data-status></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="newsletter" class="bg-pink-50" aria-labelledby="newsletter-heading">
+    <div class="container-x relative isolate grid gap-8 overflow-hidden py-16 lg:grid-cols-12 lg:items-center lg:py-20">
+      <Glyph
+        shape="sparkle"
+        size={160}
+        class="pointer-events-none absolute top-1/2 -right-6 -z-10 hidden -translate-y-1/2 text-pink-100 lg:block"
+      />
+      <div class="lg:col-span-5">
+        <h2 id="newsletter-heading" class="h2">Get the newsletter</h2>
+        <p class="mt-4 max-w-[40ch] text-lg">Events, programs and opportunities, straight to your inbox.</p>
+      </div>
+      <NewsletterForm id="newsletter-contact" class="lg:col-span-5 lg:col-start-7" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+  .channel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 0;
+  }
+  .channel-icon {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 4px;
+    transition:
+      border-color 160ms,
+      color 160ms;
+  }
+  .channel:hover .channel-icon {
+    border-color: var(--color-pink-700);
+    color: var(--color-pink-700);
+  }
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 160ms,
+      border-color 160ms,
+      color 160ms;
+  }
+  .chip:hover span {
+    border-color: var(--color-pink-700);
+  }
+  .chip input:checked + span {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-white);
+  }
+  .chip input:focus-visible + span {
+    outline: 2px solid var(--color-pink-700);
+    outline-offset: 2px;
+  }
+  [data-copied] {
+    background: var(--color-ink);
+    color: var(--color-white);
+  }
+</style>

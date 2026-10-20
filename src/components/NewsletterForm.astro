@@ -1,0 +1,83 @@
+---
+/* Newsletter signup. Posts to NEWSLETTER_FORM_ACTION when it's set (Mailchimp,
+   Buttondown, ConvertKit… see README); otherwise falls back to Netlify Forms. */
+import { site } from '../lib/data';
+
+interface Props {
+  id: string;
+  tone?: 'light' | 'dark';
+  label?: string;
+  class?: string;
+}
+const { id, tone = 'light', label = 'Email address', class: className } = Astro.props;
+
+const action = import.meta.env.NEWSLETTER_FORM_ACTION as string | undefined;
+const emailField = (import.meta.env.NEWSLETTER_EMAIL_FIELD as string | undefined) || 'email';
+const external = Boolean(action);
+
+const formAttrs = external
+  ? { action, target: '_blank' }
+  : {
+      name: 'newsletter',
+      'data-netlify': 'true',
+      'netlify-honeypot': 'bot-field',
+      'data-enhance': 'netlify',
+    };
+---
+
+<form
+  method="post"
+  class:list={['newsletter', `newsletter--${tone}`, className]}
+  data-success="You're on the list. Watch your inbox for GWC news."
+  data-error={`That didn't go through. Try again, or email ${site.email}.`}
+  {...formAttrs}
+>
+  {!external && <input type="hidden" name="form-name" value="newsletter" />}
+  {
+    !external && (
+      <p class="hidden">
+        <label>
+          Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off" />
+        </label>
+      </p>
+    )
+  }
+  <label for={id} class="label">{label}</label>
+  <div class="flex flex-col gap-2 sm:flex-row">
+    <input
+      id={id}
+      name={external ? emailField : 'email'}
+      type="email"
+      required
+      autocomplete="email"
+      placeholder="you@school.edu"
+      class="field sm:flex-1"
+    />
+    <button type="submit" class:list={['btn', tone === 'dark' ? 'btn-light' : 'btn-primary']}>Subscribe</button>
+  </div>
+  <p class="status mt-2 min-h-[1.5em] text-sm" role="status" aria-live="polite" data-status></p>
+</form>
+
+<style>
+  .newsletter--dark .label {
+    color: var(--color-white);
+  }
+  .newsletter--dark .field {
+    background: transparent;
+    color: var(--color-white);
+    border-color: rgb(255 255 255 / 0.35);
+  }
+  .newsletter--dark .field::placeholder {
+    color: rgb(255 255 255 / 0.55);
+  }
+  .newsletter--dark .field:focus-visible {
+    outline-color: var(--color-pink-600);
+    border-color: var(--color-pink-600);
+  }
+  .newsletter--dark .status {
+    color: rgb(255 255 255 / 0.8);
+  }
+  .newsletter[data-state='success'] .status {
+    font-weight: 600;
+  }
+</style>
