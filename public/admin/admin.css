@@ -55,7 +55,8 @@ body {
   line-height: 1.5;
   color: var(--gwc-muted);
 }
-[class*="-LoginButton"] {
+/* "button" matters: the icon inside is labelled "LoginButtonIcon" and must not get this. */
+button[class*="-LoginButton"] {
   height: auto !important;
   padding: 0.85rem 1.75rem !important;
   border-radius: 4px !important;
@@ -65,7 +66,7 @@ body {
   font-weight: 650 !important;
   box-shadow: none !important;
 }
-[class*="-LoginButton"]:hover {
+button[class*="-LoginButton"]:hover {
   background: var(--gwc-pink-hover) !important;
 }
 
