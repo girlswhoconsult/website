@@ -28,6 +28,8 @@ update events, the team, mentors and more without touching code.
 | **Site settings → By the Numbers** | The pink numbers band and the three numbers in the home page hero. |
 | **Site settings → Contact & links** | Email, social links, Slack, the board application link and its deadlines. |
 
+   For events, board members and mentors, the right side of the editor previews how the entry will look
+   on the site. **View Live** opens the page where it appears.
 3. **Review mode is on.** Clicking **Save** stores your change as a draft; nothing goes live yet.
    Open the **Workflow** tab to see drafts in three columns: *Drafts → In review → Ready*. Move a
    change to **Ready**, then click **Publish** to put it live. The site rebuilds in about a minute.
@@ -121,7 +123,7 @@ src/
   styles/global.css   Tailwind theme tokens and shared component classes
   assets/             images, optimized at build time by Astro
 public/
-  admin/              Decap CMS (index.html + config.yml)
+  admin/              Decap CMS: index.html, config.yml, admin.css (GWC theme), admin.js + preview.css (previews)
   _redirects          old Wix URLs → new pages
 ```
 
@@ -144,6 +146,13 @@ Decap uses GitHub to log in and save, with Netlify handling the login handshake:
 2. In Netlify: **Site configuration → Access & security → OAuth → Install provider → GitHub**, and
    paste the OAuth app's Client ID and Secret.
 3. Give each board member write access to the repo on GitHub.
+
+### Content manager styling
+
+`public/admin/admin.css` restyles Decap by matching the readable labels inside its generated class
+names (`[class*="-SidebarNavLink"]`), and `admin.js` registers the event/team/mentor previews. Both
+are tied to the pinned Decap version in `public/admin/index.html`, so after upgrading Decap, open
+`/admin` and check the login screen, lists, editor and previews still look right.
 
 ### Daily rebuild
 

@@ -15,7 +15,10 @@ publish_mode: editorial_workflow
 # run `npx decap-server` next to `npm run dev`, then open http://localhost:4321/admin/
 local_backend: true
 
-logo_url: /favicon.svg
+logo_url: /admin/gwc-logo.png
+# Adds a "View site" link to the header. Update if the site moves to a custom domain.
+site_url: https://girlswhoconsult1.netlify.app
+display_url: https://girlswhoconsult1.netlify.app
 
 # Default upload folder; each collection below overrides it so images land next to
 # the content that uses them. public_folder is the path written into the content
@@ -32,11 +35,14 @@ collections:
       Events sort themselves: once an event's date has passed it moves from "Upcoming" to "Past"
       on the next daily rebuild. Times show on the site in Eastern Time.
     folder: src/content/events
+    preview_path: about/#events
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     media_folder: /src/assets/events
     public_folder: ../../assets/events
     sortable_fields: ["date", "title"]
+    view_groups:
+      - { label: Year, field: date, pattern: '\d{4}' }
     summary: "{{title}} ({{date | date('MMM D, YYYY')}})"
     fields:
       - { label: Title, name: title, widget: string }
@@ -98,7 +104,9 @@ collections:
   - name: team
     label: Team
     label_singular: Board member
+    description: The Meet the Team page. "Order on page" sets the order; founders appear in their own card above the board.
     folder: src/content/team
+    preview_path: team/
     create: true
     identifier_field: name
     slug: "{{slug}}"
@@ -151,7 +159,11 @@ collections:
   - name: programs
     label: Programs
     label_singular: Program
+    description: The "Our programs" section on the About page. Tick "Flagship program" for the large panel.
+    editor:
+      preview: false
     folder: src/content/programs
+    preview_path: about/#programs
     create: true
     identifier_field: name
     slug: "{{slug}}"
@@ -178,7 +190,11 @@ collections:
   - name: resources
     label: Resources
     label_singular: Resource
+    description: Resource cards on the About page.
+    editor:
+      preview: false
     folder: src/content/resources
+    preview_path: about/#resources
     create: true
     identifier_field: title
     slug: "{{slug}}"
@@ -199,6 +215,9 @@ collections:
   - name: alumniLogos
     label: Alumni logos
     label_singular: Logo
+    description: The "alumni work for" logo wall on the home page, in this order.
+    editor:
+      preview: false
     folder: src/content/alumni-logos
     create: true
     identifier_field: name
@@ -225,6 +244,7 @@ collections:
   # ------------------------------------------------------------------ Settings
   - name: settings
     label: Site settings
+    description: The By the Numbers band, contact details, social links and the board application.
     editor:
       preview: false
     files:
