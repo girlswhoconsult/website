@@ -5,7 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 // Canonical URL for sitemap + Open Graph tags. Netlify sets URL on every build;
 // set SITE_URL to override it (e.g. once a custom domain is connected).
-const site = process.env.SITE_URL || process.env.URL || 'https://girlswhoconsult.netlify.app';
+// Local builds fall back to the dev server address.
+const site = process.env.SITE_URL || process.env.URL || 'http://localhost:4321';
 
 // https://astro.build/config
 export default defineConfig({

@@ -79,15 +79,25 @@ const ways = [
     href: mentorHref,
     external: Boolean(site.mentorSignupUrl),
   },
-  {
-    icon: 'buddies',
-    title: 'Join the board',
-    text: 'Help run GWC’s professional development, outreach, marketing, and technology.',
-    cta: 'Apply to the board',
-    href: site.boardApplication.url,
-    external: true,
-    deadlines: site.boardApplication.showDeadlines ? site.boardApplication.deadlines : [],
-  },
+  site.boardApplication.open
+    ? {
+        icon: 'buddies',
+        title: 'Join the board',
+        text: 'Help run GWC’s professional development, outreach, marketing, and technology.',
+        cta: 'Apply to the board',
+        href: site.boardApplication.url,
+        external: true,
+        deadlines: site.boardApplication.showDeadlines ? site.boardApplication.deadlines : [],
+      }
+    : {
+        icon: 'buddies',
+        title: 'Join the board',
+        text: 'Board applications are closed right now. Subscribe to the newsletter to hear when they reopen.',
+        cta: 'Get notified',
+        href: '#newsletter',
+        external: false,
+        deadlines: [],
+      },
   {
     icon: 'network',
     title: 'Partner with us',

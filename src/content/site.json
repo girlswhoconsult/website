@@ -5,11 +5,18 @@
   "slack": "https://girlswhoconsult.slack.com",
   "mentorSignupUrl": "",
   "boardApplication": {
+    "open": false,
     "url": "https://forms.gle/HUGEYrujqb912wfW7",
     "showDeadlines": false,
     "deadlines": [
-      { "label": "Priority deadline", "date": "June 15" },
-      { "label": "Final deadline", "date": "June 30" }
+      {
+        "label": "Priority deadline",
+        "date": "June 15"
+      },
+      {
+        "label": "Final deadline",
+        "date": "June 30"
+      }
     ]
   }
 }

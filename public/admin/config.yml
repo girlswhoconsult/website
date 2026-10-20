@@ -7,6 +7,10 @@ backend:
   branch: main
   # Netlify handles the GitHub login handshake. See README → "Content manager".
 
+# Review mode: changes are saved as drafts (a pull request on GitHub) and only go
+# live after someone moves them to "Ready" and clicks Publish on the Workflow tab.
+publish_mode: editorial_workflow
+
 # Edit content on your own computer without logging in:
 # run `npx decap-server` next to `npm run dev`, then open http://localhost:4321/admin/
 local_backend: true
@@ -40,6 +44,7 @@ collections:
         name: date
         widget: datetime
         format: "YYYY-MM-DDTHH:mm:ssZ"
+        hint: Enter the time in your own time zone; the site shows it in Eastern Time.
       - label: End date & time
         name: endDate
         widget: datetime
@@ -75,12 +80,12 @@ collections:
         widget: boolean
         default: false
         required: false
-      - label: Draft
+      - label: Hide on the live site
         name: draft
         widget: boolean
         default: false
         required: false
-        hint: Drafts never appear on the live site.
+        hint: Keeps this event off the live site even after it's published (it still shows in a local preview).
       - label: Recap
         name: body
         widget: markdown
@@ -124,7 +129,7 @@ collections:
   - name: mentors
     label: Mentors
     label_singular: Mentor
-    description: The "Meet our mentors" section on the home page appears once at least one mentor is published (not a draft).
+    description: The "Meet our mentors" section on the home page appears once at least one mentor is published and not hidden.
     folder: src/content/mentors
     create: true
     identifier_field: name
@@ -140,7 +145,7 @@ collections:
       - { label: Photo, name: photo, widget: image, required: false, choose_url: false }
       - { label: LinkedIn URL, name: linkedin, widget: string, required: false }
       - { label: Order on page, name: order, widget: number, value_type: int, min: 0 }
-      - { label: Draft, name: draft, widget: boolean, default: false, required: false, hint: Drafts never appear on the live site. }
+      - { label: Hide on the live site, name: draft, widget: boolean, default: false, required: false, hint: Keeps this mentor off the live site even after it's published. }
 
   # ------------------------------------------------------------------ Programs
   - name: programs
@@ -209,6 +214,7 @@ collections:
         name: scale
         widget: number
         value_type: float
+        required: false
         default: 1
         min: 0.5
         max: 2
@@ -247,6 +253,7 @@ collections:
               - label: Kind
                 name: kind
                 widget: select
+                required: false
                 default: number
                 options:
                   - { label: "Number (counts up, shows commas)", value: number }
@@ -268,6 +275,11 @@ collections:
             name: boardApplication
             widget: object
             fields:
+              - label: Applications open
+                name: open
+                widget: boolean
+                default: false
+                hint: When off, the board card says applications are closed instead of linking to the form.
               - { label: Application form URL, name: url, widget: string }
               - { label: Show deadlines, name: showDeadlines, widget: boolean, default: false }
               - label: Deadlines

@@ -28,12 +28,20 @@ update events, the team, mentors and more without touching code.
 | **Site settings → By the Numbers** | The pink numbers band and the three numbers in the home page hero. |
 | **Site settings → Contact & links** | Email, social links, Slack, the board application link and its deadlines. |
 
-3. Click **Publish**. The site rebuilds automatically.
+3. **Review mode is on.** Clicking **Save** stores your change as a draft; nothing goes live yet.
+   Open the **Workflow** tab to see drafts in three columns: *Drafts → In review → Ready*. Move a
+   change to **Ready**, then click **Publish** to put it live. The site rebuilds in about a minute.
+   (Behind the scenes each draft is a pull request on GitHub.)
 
 **Good to know**
 
-- **Drafts:** anything with **Draft** ticked shows only on a local preview, never on the live site.
-  Use it to prepare an event before announcing it.
+- **Review mode doesn't force a second person.** Anyone with access can publish their own change.
+  The convention is that someone else moves it to Ready. To *require* a second approver, turn on
+  GitHub branch protection for `main` with one required review; the reviewer then approves the pull
+  request on GitHub before Publish works.
+- **Hide on the live site:** entries with this ticked never appear on the live site, even after
+  they're published (they still show in a local preview). Use it to prepare an event before
+  announcing it.
 - **Past events move themselves.** Once an event's end time (or start time if it has no end) has
   passed, it moves from "Upcoming" to "Past events" on the next daily rebuild. Add a **Recap** so it
   says something useful once it's over.
@@ -54,23 +62,29 @@ These came up while rebuilding the site. Placeholders are marked `TODO(board)` i
    please verify before adding.
 3. **Descriptions for Case Competition, Ambassador Program, Workshops, Panels and Case Buddies.**
    Each has a one-line placeholder to confirm or rewrite.
-4. **Upcoming events and the 2025 events form.** A draft event uses the sign-up link from the old
-   Programs page (`https://forms.gle/1N6v1BwZ12Yxyiit5`). Its banner says "Mentorship Program, Mentor
-   Application", so it may be the mentor application rather than an event. Confirm the name and date.
-   The **Mentorship Program** recap's date is unknown, so it's hidden on the site until confirmed.
+4. **Upcoming events.** The old "2025 Events" link (`https://forms.gle/1N6v1BwZ12Yxyiit5`) turned
+   out to be the *GWC Mentor Application* Google Form (closed as of October 2026), not an event. It's
+   saved as a hidden placeholder event; replace it with a real event or delete it. The **Mentorship
+   Program** recap's date is unknown, so it's hidden on the site until confirmed.
 5. **Newsletter provider** (Mailchimp, Buttondown, Kit/ConvertKit…). Until one is chosen, sign-ups are
    collected by Netlify Forms (Netlify → Forms → newsletter).
 6. **Mentor sign-up method.** "Become a mentor" opens an email until a form link is added in
-   Site settings → Contact & links.
+   Site settings → Contact & links. The *GWC Mentor Application* form above could go there when it
+   reopens.
 7. **Custom domain** (if moving off wixsite.com). Set `SITE_URL` in Netlify afterwards.
 8. **Founder card:** Belicia Tan is shown above the board on Meet the Team. Untick **Show as
    founder** (or delete the entry) to remove it.
 9. **Student Career Corner link:** this Notion link came from an image on the old site. Confirm it's
    the one to keep.
-10. **Board application deadlines** (June 15 priority / June 30 final on the old site) are saved but
-    hidden. Update them and tick **Show deadlines** when applications reopen.
+10. **Board applications** are closed (the *2026–2027 Board Application* form no longer accepts
+    responses), so the "Join the board" card says so and points to the newsletter. When applications
+    reopen: paste the new form link, tick **Applications open**, and update the deadlines (June 15
+    priority / June 30 final on the old site) and **Show deadlines** in Site settings → Contact & links.
 11. **Microsoft logo:** the old site's file for it wasn't available, so the official logo from
     Wikimedia Commons is used instead.
+12. **Slack invite link.** `girlswhoconsult.slack.com` only shows a sign-in page, so people who aren't
+    members yet can't join from it. Create a shareable invite link in Slack (Invite people → Copy
+    invite link) and paste it into Site settings → Contact & links → Slack URL.
 
 ---
 
@@ -86,7 +100,8 @@ npm run dev
 ```
 
 Open http://localhost:4321. To use the content manager locally without logging in, run
-`npx decap-server` in a second terminal and open http://localhost:4321/admin/.
+`npx decap-server` in a second terminal and open http://localhost:4321/admin/index.html.
+Locally, saves write straight to the files in `src/content/`; review mode only applies on the live site.
 
 ```bash
 npm run build     # production build into dist/ (drafts excluded)

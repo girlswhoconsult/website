@@ -1,7 +1,7 @@
 ---
-# TODO(board): this seed event uses the sign-up link from the old "2025 Events"
-# page. Its banner reads "Mentorship Program – Mentor Application", so confirm
-# the name, date and location, then untick "Draft" in the CMS to publish it.
+# TODO(board): this seed entry uses the link from the old "2025 Events" page.
+# That link is the "GWC Mentor Application" Google Form (closed as of Oct 2026),
+# not an event. Replace it with a real event, or delete it.
 title: "TODO: confirm event name"
 date: 2026-11-15T18:00:00-05:00
 location: Virtual

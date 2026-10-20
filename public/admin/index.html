@@ -6,12 +6,14 @@
     <meta name="robots" content="noindex" />
     <title>Content Manager | Girls Who Consult</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- Decap CMS (git-based). Configuration lives in ./config.yml. -->
+  </head>
+  <body>
+    <!-- Decap CMS (git-based). Configuration lives in ./config.yml.
+         Must load inside <body>: it mounts itself onto document.body on startup. -->
     <script
       src="https://unpkg.com/decap-cms@3.16.3/dist/decap-cms.js"
       integrity="sha384-A/Gdn928CNLufmnGWGs9RM4Q9o8bSNLeJERqBFrBjwzL7FRpoLT3MPF8Tl0+Wd2p"
       crossorigin="anonymous"
     ></script>
-  </head>
-  <body></body>
+  </body>
 </html>

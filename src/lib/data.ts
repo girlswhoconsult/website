@@ -13,6 +13,8 @@ const siteSchema = z.object({
   slack: z.url(),
   mentorSignupUrl: z.union([z.url(), z.literal('')]).default(''),
   boardApplication: z.object({
+    // When false the board card says applications are closed instead of linking to the form.
+    open: z.boolean().default(false),
     url: z.url(),
     showDeadlines: z.boolean().default(false),
     deadlines: z.array(z.object({ label: z.string(), date: z.string() })).default([]),
