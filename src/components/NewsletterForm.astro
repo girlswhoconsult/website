@@ -28,8 +28,6 @@ const formAttrs = external
 <form
   method="post"
   class:list={['newsletter', `newsletter--${tone}`, className]}
-  data-success="You're on the list. Watch your inbox for GWC news."
-  data-error={`That didn't go through. Try again, or email ${site.email}.`}
   {...formAttrs}
 >
   {!external && <input type="hidden" name="form-name" value="newsletter" />}
@@ -55,7 +53,15 @@ const formAttrs = external
     />
     <button type="submit" class:list={['btn', tone === 'dark' ? 'btn-light' : 'btn-primary']}>Subscribe</button>
   </div>
-  <p class="status mt-2 min-h-[1.5em] text-sm" role="status" aria-live="polite" data-status></p>
+  <!-- Messages live here, not on <form>: Netlify rewrites the form tag and breaks apostrophes in its attributes. -->
+  <p
+    class="status mt-2 min-h-[1.5em] text-sm"
+    role="status"
+    aria-live="polite"
+    data-status
+    data-success="You’re on the list. Watch your inbox for GWC news."
+    data-error={`That didn’t go through. Try again, or email ${site.email}.`}
+  ></p>
 </form>
 
 <style>

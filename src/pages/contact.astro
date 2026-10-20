@@ -69,8 +69,6 @@ const interests = ['Member', 'Mentor', 'Partner', 'Other'];
           data-netlify="true"
           netlify-honeypot="bot-field"
           data-enhance="netlify"
-          data-success="Message sent. Thanks for reaching out."
-          data-error={`That didn't go through. Try again, or email ${site.email}.`}
           class="mt-8 space-y-6"
         >
           <input type="hidden" name="form-name" value="contact" />
@@ -111,7 +109,14 @@ const interests = ['Member', 'Mentor', 'Partner', 'Other'];
 
           <div class="flex flex-wrap items-center gap-4">
             <button type="submit" class="btn btn-primary">Send message</button>
-            <p class="text-sm" role="status" aria-live="polite" data-status></p>
+            <p
+              class="text-sm"
+              role="status"
+              aria-live="polite"
+              data-status
+              data-success="Message sent. Thanks for reaching out."
+              data-error={`That didn’t go through. Try again, or email ${site.email}.`}
+            ></p>
           </div>
         </form>
       </div>

@@ -1,6 +1,7 @@
 /* Progressive enhancement for Netlify Forms: submit in place and show the
    result inline. Without JS the form still posts and Netlify shows its own
-   confirmation page. */
+   confirmation page. The success/error text sits on the [data-status] element,
+   not the <form>: Netlify re-serializes form tags and mangles apostrophes there. */
 
 document.querySelectorAll<HTMLFormElement>('form[data-enhance="netlify"]').forEach((form) => {
   form.addEventListener('submit', async (event) => {
@@ -19,10 +20,10 @@ document.querySelectorAll<HTMLFormElement>('form[data-enhance="netlify"]').forEa
       if (!response.ok) throw new Error(`Form post failed: ${response.status}`);
       form.reset();
       form.dataset.state = 'success';
-      if (status) status.textContent = form.dataset.success ?? 'Sent.';
+      if (status) status.textContent = status.dataset.success ?? 'Sent.';
     } catch {
       form.dataset.state = 'error';
-      if (status) status.textContent = form.dataset.error ?? 'That didn’t go through. Please try again.';
+      if (status) status.textContent = status.dataset.error ?? 'That didn’t go through. Please try again.';
     } finally {
       if (button) button.disabled = false;
     }
